@@ -25,7 +25,7 @@ export default function RegionalResearch({
     : RESEARCH_REGIONS;
   return (
     <section className="regional-research" aria-labelledby={headingId}>
-      <h3 id={headingId}>Discover Leonida</h3>
+      <h3 id={headingId}>Descubra Leonida</h3>
       <p className="regional-research-intro">
         {region ? "Regional context. " : ""}
         Official names and visible details. Exact locations are not established
@@ -40,7 +40,7 @@ export default function RegionalResearch({
         <details className="regional-research-group" key={group.slug}>
           <summary>
             {group.name}
-            <span>{getRegionDiscoveries(group.slug).length} discoveries</span>
+            <span>{getRegionDiscoveries(group.slug).length} descobertas</span>
           </summary>
           <p className="regional-research-overview">{group.summary}</p>
           <ul className="regional-discoveries">

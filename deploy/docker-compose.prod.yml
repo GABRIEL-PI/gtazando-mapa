@@ -9,6 +9,8 @@ services:
         ATLAS_BASE_PATH: '${ATLAS_ROUTE_PREFIX:?Set a path prefix without trailing slash}/'
         VITE_ATLAS_SITE_ORIGIN: '${ATLAS_SITE_ORIGIN:-}'
         VITE_ANALYTICS_ID: '${VITE_ANALYTICS_ID:-}'
+        VITE_GTAZANDO_URL: '${VITE_GTAZANDO_URL:-https://gtazando.com/}'
+        VITE_SOURCE_URL: '${VITE_SOURCE_URL:-}'
         VITE_ANALYTICS_ORIGIN: '${VITE_ANALYTICS_ORIGIN:-}'
         VITE_ANALYTICS_PARENT_ORIGIN: '${VITE_ANALYTICS_PARENT_ORIGIN:-}'
     image: '${ATLAS_IMAGE:-leonida-atlas:prod}'

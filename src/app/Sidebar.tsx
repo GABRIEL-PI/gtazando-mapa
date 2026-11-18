@@ -17,15 +17,16 @@ import { useDomainStore, useMapStore, useUiStore } from '../stores/atlas';
 import { SavedPlaces } from '../features/library/SavedPlaces';
 import { Status } from './Status';
 import { setAccountEntryTarget } from '../capabilities/extension-host';
+import { GTAZANDO_URL, SOURCE_URL } from './gtazando';
 
 export const CATEGORIES: { id: Category | 'all'; name: string }[] = [
-  { id: 'all', name: 'All places' },
-  { id: 'region', name: 'Regions' },
-  { id: 'landmark', name: 'Landmarks' },
-  { id: 'nature', name: 'Nature' },
-  { id: 'transport', name: 'Transport' },
-  { id: 'business', name: 'Businesses' },
-  { id: 'personal', name: 'Personal' },
+  { id: 'all', name: 'Todos os lugares' },
+  { id: 'region', name: 'Regiões' },
+  { id: 'landmark', name: 'Pontos famosos' },
+  { id: 'nature', name: 'Natureza' },
+  { id: 'transport', name: 'Transporte' },
+  { id: 'business', name: 'Comércios' },
+  { id: 'personal', name: 'Meus marcadores' },
 ];
 
 function LayerManager() {
@@ -51,7 +52,7 @@ function LayerManager() {
   return (
     <div className="layer-manager">
       <p className="panel-intro">
-        Choose what appears on the map. Layers at the top draw above the others.
+        Escolha o que aparece no mapa. As camadas do topo ficam por cima das outras.
       </p>
       {ordered.map((layer, index) => (
         <div className="layer-row" key={layer.id}>
@@ -78,7 +79,7 @@ function LayerManager() {
           <div>
             <button
               className="icon-button"
-              aria-label={`Raise ${layer.name}`}
+              aria-label={`Subir ${layer.name}`}
               disabled={index === 0}
               onClick={() => move(layer.id, -1)}
             >
@@ -86,7 +87,7 @@ function LayerManager() {
             </button>
             <button
               className="icon-button"
-              aria-label={`Lower ${layer.name}`}
+              aria-label={`Descer ${layer.name}`}
               disabled={index === ordered.length - 1}
               onClick={() => move(layer.id, 1)}
             >
@@ -96,8 +97,8 @@ function LayerManager() {
         </div>
       ))}
       <p className="empty-state">
-        The basemap is a community reconstruction. Unmapped areas remain unknown; positions are
-        approximate.
+        O mapa-base é uma reconstrução da comunidade. Áreas não mapeadas continuam desconhecidas;
+        as posições são aproximadas.
       </p>
     </div>
   );
@@ -116,7 +117,7 @@ function Results({ places }: { places: Place[] }) {
   return (
     <>
       <div className="filter-controls">
-        <label htmlFor="category">Browse categories</label>
+        <label htmlFor="category">Categorias</label>
         <select
           id="category"
           value={filters.category}
@@ -139,11 +140,11 @@ function Results({ places }: { places: Place[] }) {
                 useUiStore.getState().setFilters({ favoritesOnly: e.target.checked })
               }
             />
-            Favorites
+            Favoritos
           </label>
           <select
             className="compact-select"
-            aria-label="Evidence filter"
+            aria-label="Filtro de evidência"
             value={filters.evidence}
             onChange={(e) =>
               useUiStore
@@ -151,26 +152,26 @@ function Results({ places }: { places: Place[] }) {
                 .setFilters({ evidence: e.target.value as 'all' | 'approximate' | 'uncertain' })
             }
           >
-            <option value="all">All evidence</option>
-            <option value="approximate">Named entries</option>
-            <option value="uncertain">Uncertain entries</option>
+            <option value="all">Todas as evidências</option>
+            <option value="approximate">Com nome</option>
+            <option value="uncertain">Incertos</option>
           </select>
         </div>
       </div>
       <div className="results-count">
-        <span>{places.length.toLocaleString()} results</span>
+        <span>{places.length.toLocaleString('pt-BR')} resultados</span>
         <button className="text-button" onClick={() => useUiStore.getState().resetFilters()}>
-          Reset filters
+          Limpar filtros
         </button>
       </div>
       {status === 'loading' ? (
-        <p className="empty-state">Loading the public catalogue…</p>
+        <p className="empty-state">Carregando o catálogo…</p>
       ) : !places.length ? (
         <p className="empty-state">
-          No places match these filters. Try another name, region or tag.
+          Nenhum lugar com esses filtros. Tente outro nome, região ou tag.
         </p>
       ) : (
-        <div className="place-results" aria-label="Search results">
+        <div className="place-results" aria-label="Resultados da busca">
           {places.slice(0, limit).map((place) => (
             <button
               className={`place-result ${selectedId === place.id ? 'active' : ''}`}
@@ -179,17 +180,17 @@ function Results({ places }: { places: Place[] }) {
             >
               <MapPin size={19} />
               <span>
-                <strong>{place.title || 'Unnamed entry'}</strong>
+                <strong>{place.title || 'Sem nome'}</strong>
                 <small>
                   {!place.position
-                    ? 'Unpositioned'
+                    ? 'Sem posição'
                     : place.evidence === 'personal'
-                      ? 'Personal marker'
+                      ? 'Meu marcador'
                       : place.category === 'region'
-                        ? 'Region · approximate'
+                        ? 'Região · aproximado'
                         : place.evidence === 'uncertain'
-                          ? 'Uncertain · approximate'
-                          : `${place.category} · approximate`}
+                          ? 'Incerto · aproximado'
+                          : `${CATEGORIES.find((c) => c.id === place.category)?.name ?? place.category} · aproximado`}
                 </small>
               </span>
               <ChevronRight size={16} />
@@ -199,7 +200,7 @@ function Results({ places }: { places: Place[] }) {
       )}
       {places.length > limit && (
         <button className="load-more" onClick={() => setLimit((n) => n + 50)}>
-          Show next {Math.min(50, places.length - limit)} places
+          Mostrar mais {Math.min(50, places.length - limit)} lugares
         </button>
       )}
     </>
@@ -211,15 +212,18 @@ export function Sidebar({ places }: { places: Place[] }) {
   const open = useUiStore((s) => s.sidebarOpen);
   const query = useUiStore((s) => s.filters.query);
   return (
-    <aside className="sidebar" data-open={open} aria-label="Atlas sidebar">
+    <aside className="sidebar" data-open={open} aria-label="Barra lateral do mapa">
       <header className="brand-header">
         <div>
-          <h1>LEONIDA ATLAS</h1>
-          <p>GTA VI INDEPENDENT COMMUNITY ATLAS</p>
+          <a className="gtazando-back" href={GTAZANDO_URL}>
+            ← gtazando.com
+          </a>
+          <h1>MAPA DE LEONIDA</h1>
+          <p>GTA 6 · MAPA DA COMUNIDADE · GTAZANDO</p>
         </div>
         <button
           className="icon-button mobile-only"
-          aria-label="Close sidebar"
+          aria-label="Fechar barra lateral"
           onClick={() => useUiStore.getState().setSidebar(false)}
         >
           <X size={21} />
@@ -231,8 +235,8 @@ export function Sidebar({ places }: { places: Place[] }) {
           id="atlas-search"
           type="search"
           maxLength={250}
-          placeholder="Search places, regions, tags"
-          aria-label="Search places, regions, tags"
+          placeholder="Buscar lugares, regiões, tags"
+          aria-label="Buscar lugares, regiões, tags"
           value={query}
           onChange={(e) => {
             useUiStore.getState().setFilters({ query: e.target.value });
@@ -241,12 +245,12 @@ export function Sidebar({ places }: { places: Place[] }) {
         />
         <kbd>/</kbd>
       </div>
-      <nav className="sidebar-tabs" aria-label="Atlas tools">
+      <nav className="sidebar-tabs" aria-label="Ferramentas do mapa">
         {(
           [
-            { id: 'explore', name: 'Explore', icon: Compass },
-            { id: 'layers', name: 'Layers', icon: Layers },
-            { id: 'saved', name: 'Saved', icon: Bookmark },
+            { id: 'explore', name: 'Explorar', icon: Compass },
+            { id: 'layers', name: 'Camadas', icon: Layers },
+            { id: 'saved', name: 'Salvos', icon: Bookmark },
           ] as const
         ).map((item) => (
           <button
@@ -278,7 +282,7 @@ export function Sidebar({ places }: { places: Place[] }) {
               useUiStore.getState().setDialog('settings');
             }}>
             <Settings size={17} />
-            Settings
+            Ajustes
           </button>
           <button className="button" onClick={(event) => {
               event.currentTarget.focus();
@@ -288,6 +292,17 @@ export function Sidebar({ places }: { places: Place[] }) {
             Backup
           </button>
         </div>
+        <p className="gtazando-source">
+          Baseado no{' '}
+          <a href="https://github.com/navanem/gta6-leonida-atlas" target="_blank" rel="noreferrer">
+            Leonida Atlas
+          </a>{' '}
+          (AGPL-3.0) ·{' '}
+          <a href={SOURCE_URL} target="_blank" rel="noreferrer">
+            código-fonte desta versão
+          </a>
+          . Site independente, sem afiliação com a Rockstar Games.
+        </p>
       </footer>
     </aside>
   );

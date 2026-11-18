@@ -12,6 +12,7 @@ import {
 import { finishNoteSave, reconcileNoteDraft, type NoteDraft } from './note-draft';
 import { getResearchForPlace } from '../street-leonida/leonida-research';
 import RegionalResearch from './RegionalResearch';
+import { CATEGORIES } from '../../app/Sidebar';
 
 export default function PlaceDetails({ place }: { place: Place }) {
   const favorite = useUserStore((s) => s.favorites.some((f) => f.placeId === place.id));
@@ -82,12 +83,12 @@ export default function PlaceDetails({ place }: { place: Place }) {
     }
   }
   return (
-    <aside className="detail-panel" aria-label="Place details">
+    <aside className="detail-panel" aria-label="Detalhes do lugar">
       <header className="panel-heading">
-        <span className="eyebrow">{isPersonal ? 'PERSONAL PLACE' : 'PLACE DETAILS'}</span>
+        <span className="eyebrow">{isPersonal ? 'MEU LUGAR' : 'DETALHES DO LUGAR'}</span>
         <button
           className="icon-button"
-          aria-label="Close place details"
+          aria-label="Fechar detalhes"
           onClick={() => useMapStore.getState().select(null)}
         >
           <X size={20} />
@@ -100,12 +101,12 @@ export default function PlaceDetails({ place }: { place: Place }) {
         </div>
         <p className="evidence-label">
           {isPersonal
-            ? 'Personal marker · on this device'
+            ? 'Meu marcador · neste aparelho'
             : !place.position
-              ? 'No mapped position'
+              ? 'Sem posição no mapa'
               : place.evidence === 'uncertain'
-                ? 'Uncertain entry · approximate placement'
-                : 'Community placement · approximate'}
+                ? 'Incerto · posição aproximada'
+                : 'Posição da comunidade · aproximada'}
         </p>
         <button
           disabled={!ready}
@@ -113,23 +114,23 @@ export default function PlaceDetails({ place }: { place: Place }) {
           onClick={() => void saveLocal(() => atlasRepository.toggleFavorite(place.id))}
         >
           <Star size={18} fill={favorite ? 'currentColor' : 'none'} />
-          {favorite ? 'Saved to favorites' : 'Add to favorites'}
+          {favorite ? 'Nos favoritos' : 'Adicionar aos favoritos'}
         </button>
         {place.description && <p className="description">{place.description}</p>}
         <dl className="place-meta">
           <div>
-            <dt>Category</dt>
-            <dd>{place.category}</dd>
+            <dt>Categoria</dt>
+            <dd>{CATEGORIES.find((c) => c.id === place.category)?.name ?? place.category}</dd>
           </div>
           {place.region && (
             <div>
-              <dt>Region</dt>
+              <dt>Região</dt>
               <dd>{place.region}</dd>
             </div>
           )}
           {place.position && (
             <div>
-              <dt>Game coordinates</dt>
+              <dt>Coordenadas no jogo</dt>
               <dd>
                 {place.position.x.toFixed(1)}, {place.position.y.toFixed(1)}
               </dd>
@@ -145,14 +146,14 @@ export default function PlaceDetails({ place }: { place: Place }) {
         )}
         {research && <RegionalResearch region={research.region.slug} />}
         <section className="detail-section">
-          <label htmlFor="place-note">Notes</label>
+          <label htmlFor="place-note">Anotações</label>
           <textarea
             id="place-note"
             rows={5}
             maxLength={100000}
             value={draft.text}
             disabled={!ready}
-            placeholder="Add notes about this place…"
+            placeholder="Escreva algo sobre este lugar…"
             onChange={(e) => {
               const text = e.currentTarget.value;
               setDraft((current) => ({ ...current, text, dirty: true }));
@@ -170,14 +171,14 @@ export default function PlaceDetails({ place }: { place: Place }) {
               onClick={() => void saveNote()}
             >
               {noteBusy ? (
-                'Saving…'
+                'Salvando…'
               ) : noteSaved ? (
                 <>
                   <Check size={14} />
                   Saved
                 </>
               ) : (
-                'Save note'
+                'Salvar anotação'
               )}
             </button>
           </div>
@@ -203,7 +204,7 @@ export default function PlaceDetails({ place }: { place: Place }) {
           )}
         </section>
         <section className="detail-section">
-          <label htmlFor="place-collection">Add to collection</label>
+          <label htmlFor="place-collection">Adicionar a uma coleção</label>
           <select
             id="place-collection"
             disabled={!ready || collections.length === 0}
@@ -211,7 +212,7 @@ export default function PlaceDetails({ place }: { place: Place }) {
             onChange={(e) => void addToCollection(e.target.value)}
           >
             <option value="">
-              {collections.length ? 'Select a collection…' : 'Create a collection in Saved'}
+              {collections.length ? 'Escolha uma coleção…' : 'Crie uma coleção em Salvos'}
             </option>
             {collections.map((c) => (
               <option key={c.id} value={c.id}>
@@ -261,7 +262,7 @@ export default function PlaceDetails({ place }: { place: Place }) {
           </div>
         ) : (
           <button className="text-button" onClick={() => void share()}>
-            {copied ? 'Link copied' : 'Copy place link'}
+            {copied ? 'Link copiado' : 'Copiar link do lugar'}
           </button>
         )}
       </div>

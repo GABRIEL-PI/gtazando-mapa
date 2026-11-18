@@ -497,7 +497,7 @@ export default function MapView(props: MapViewProps) {
         </button>
       </div>
       <div className="atlas-map-caption">
-        <span>{counts.places.toLocaleString()} places in view</span>
+        <span>{counts.places.toLocaleString('pt-BR')} lugares na tela</span>
         {counts.groupedForPerformance ? <span>Grouped for map performance</span> : null}
       </div>
       <div className="atlas-map-attribution">
@@ -508,7 +508,7 @@ export default function MapView(props: MapViewProps) {
         <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
           CC BY 4.0
         </a>
-        <span> · Approximate community map</span>
+        <span> · Mapa aproximado da comunidade</span>
       </div>
       {mapError ? (
         <div className="atlas-map-error" role="alert">

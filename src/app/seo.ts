@@ -41,10 +41,10 @@ export const ATLAS_PROJECT_META: Record<
   },
 };
 export const ATLAS_ENTRY_META = {
-  title: "GTA 6 Leonida Atlas: Interactive Community Map",
-  heading: "GTA 6 Leonida Atlas",
+  title: "Mapa de GTA 6 interativo: Leonida e Vice City | Gtazando",
+  heading: "Mapa interativo de GTA 6",
   description:
-    "Explore an approximate community map of Leonida, inspect cited location evidence and keep personal favorites, notes and collections in your browser.",
+    "Mapa interativo de GTA 6 com Vice City e as regiões de Leonida. Busque lugares, salve favoritos e marque suas descobertas.",
 };
 export function atlasPageMeta(
   pathname: string,
