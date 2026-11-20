@@ -14,7 +14,7 @@ As páginas "Sobre", "Créditos" e "Licenças" e as descrições dos lugares con
 
 ## Obrigações de licença
 
-- **Código (AGPL-3.0):** como o mapa fica público na internet, o código desta versão precisa estar disponível para quem usa. Publique este repositório (ex.: `github.com/SEU_USUARIO/gtazando-mapa`) e aponte `VITE_SOURCE_URL` para ele antes de subir. Qualquer mudança futura também entra no repositório público.
+- **Código (AGPL-3.0):** como o mapa fica público na internet, o código desta versão precisa estar disponível para quem usa. Publique este repositório (ex.: `github.com/GABRIEL-PI/gtazando-mapa`) e aponte `VITE_SOURCE_URL` para ele antes de subir. Qualquer mudança futura também entra no repositório público.
 - **Mapa e catálogo (CC BY 4.0, GTADB / Map GTA):** mantenha a atribuição que já aparece no canto do mapa.
 - **Rockstar:** nomes, logos e imagens são da Rockstar/Take-Two. Não acrescente logo nem arte oficial.
 
@@ -31,7 +31,7 @@ pnpm dev                     # http://127.0.0.1:4330
 
 ```sh
 ATLAS_BASE_PATH=/mapa/ \
-VITE_SOURCE_URL=https://github.com/SEU_USUARIO/gtazando-mapa \
+VITE_SOURCE_URL=https://github.com/GABRIEL-PI/gtazando-mapa \
 pnpm build
 ```
 
@@ -61,7 +61,7 @@ ATLAS_ROUTE_PREFIX=/mapa
 ATLAS_PROXY_NETWORK=proxy
 ATLAS_TLS_RESOLVER=letsencrypt
 ATLAS_IMAGE=gtazando-mapa:prod
-VITE_SOURCE_URL=https://github.com/SEU_USUARIO/gtazando-mapa
+VITE_SOURCE_URL=https://github.com/GABRIEL-PI/gtazando-mapa
 ```
 
 ```sh
